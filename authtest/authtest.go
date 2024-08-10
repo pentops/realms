@@ -26,6 +26,12 @@ func WithScopes(scopes []string) tokenOption {
 	}
 }
 
+func WithSubject(subjectType, subjectID string) tokenOption {
+	return func(token *j5auth.JWT) {
+		token.Subject = fmt.Sprintf("%s/%s", subjectType, subjectID)
+	}
+}
+
 func WithClaim(claim *auth_j5pb.Claim) tokenOption {
 	return func(token *j5auth.JWT) {
 		token.TenantType = claim.TenantType
