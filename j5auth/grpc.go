@@ -50,19 +50,18 @@ func GRPCMiddleware(ctx context.Context, req any, info *grpc.UnaryServerInfo, ha
 		return nil, err
 	}
 
-	if incomming == nil {
-		return handler(ctx, req)
-	}
-
-	actor, err := ActorFromJWT(incomming)
-	if err != nil {
-		return nil, err
-	}
-
 	action := &auth_j5pb.Action{
-		Actor:  actor,
 		Method: info.FullMethod,
 		// TODO: Fingerprint
+	}
+
+	if incomming != nil {
+		actor, err := ActorFromJWT(incomming)
+		if err != nil {
+			return nil, err
+		}
+
+		action.Actor = actor
 	}
 
 	ctx = WithAction(ctx, action)
