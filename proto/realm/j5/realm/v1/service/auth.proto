@@ -5,6 +5,7 @@ package j5.realm.v1.service;
 import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "j5/auth/v1/actor.proto";
+import "j5/ext/v1/annotations.proto";
 import "j5/realm/v1/realm.proto";
 import "j5/realm/v1/tenant.proto";
 
@@ -13,6 +14,7 @@ option go_package = "github.com/pentops/realms/gen/j5/realm/v1/realm_j5spb";
 service AuthService {
   rpc Whoami(WhoamiRequest) returns (WhoamiResponse) {
     option (google.api.http) = {get: "/realm-auth/v1/whoami"};
+    option (j5.ext.v1.method).auth.none = {};
   }
 }
 
