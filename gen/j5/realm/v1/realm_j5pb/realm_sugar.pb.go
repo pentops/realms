@@ -5,6 +5,7 @@ package realm_j5pb
 import (
 	driver "database/sql/driver"
 	fmt "fmt"
+	proto "google.golang.org/protobuf/proto"
 )
 
 // RealmEventType is a oneof wrapper
@@ -28,6 +29,7 @@ func (x *RealmEventType) TypeKey() (RealmEventTypeKey, bool) {
 
 type IsRealmEventTypeWrappedType interface {
 	TypeKey() RealmEventTypeKey
+	proto.Message
 }
 
 func (x *RealmEventType) Set(val IsRealmEventTypeWrappedType) {

@@ -5,6 +5,7 @@ package realm_j5pb
 import (
 	driver "database/sql/driver"
 	fmt "fmt"
+	proto "google.golang.org/protobuf/proto"
 )
 
 // TenantEventType is a oneof wrapper
@@ -28,6 +29,7 @@ func (x *TenantEventType) TypeKey() (TenantEventTypeKey, bool) {
 
 type IsTenantEventTypeWrappedType interface {
 	TypeKey() TenantEventTypeKey
+	proto.Message
 }
 
 func (x *TenantEventType) Set(val IsTenantEventTypeWrappedType) {
