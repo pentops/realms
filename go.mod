@@ -9,7 +9,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.0
 	github.com/pentops/j5 v0.0.0-20250220215902-96e4ad10ce0b
-	github.com/pentops/protostate v0.0.0-20250131234558-9dc826916f65
+	github.com/pentops/protostate v0.0.0-20250305161356-5d0574ed788c
 	github.com/pentops/sqrlx.go v0.0.0-20250107233303-36a524e154c7
 	google.golang.org/genproto/googleapis/api v0.0.0-20250303144028-a0af3efb3deb
 	google.golang.org/grpc v1.71.0
