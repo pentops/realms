@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/pentops/j5/gen/j5/auth/v1/auth_j5pb"
 	"github.com/pentops/j5/gen/j5/messaging/v1/messaging_j5pb"
 	"github.com/pentops/realms/j5auth"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -85,6 +87,21 @@ func MessageContext(ctx context.Context, mods ...messageOption) context.Context 
 	}
 
 	return j5auth.WithMessageCause(ctx, cause)
+}
+
+// AutoMessageGRPCMiddleware adds a default message context for all gRPC
+// services ending in "Topic"
+func AutoMessageGRPCMiddleware(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	method := strings.Split(info.FullMethod, "/")
+	if len(method) != 3 {
+		return nil, fmt.Errorf("invalid method %s", method)
+	}
+	serviceName := method[1]
+	if !strings.HasSuffix(serviceName, "Topic") {
+		return handler(ctx, req)
+	}
+
+	return handler(MessageContext(ctx), req)
 }
 
 func buildToken(opts ...tokenOption) *j5auth.JWT {
