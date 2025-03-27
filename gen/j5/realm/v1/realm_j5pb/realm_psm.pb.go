@@ -362,3 +362,33 @@ func RealmPSMGeneralEventDataHook(cb func(context.Context, sqrlx.Transaction, *R
 		RealmPSMEvent,   // implements psm.IInnerEvent
 	](cb)
 }
+func RealmPSMEventPublishHook(cb func(context.Context, psm.Publisher, *RealmState, *RealmEvent) error) psm.EventPublishHook[
+	*RealmKeys,      // implements psm.IKeyset
+	*RealmState,     // implements psm.IState
+	RealmStatus,     // implements psm.IStatusEnum
+	*RealmStateData, // implements psm.IStateData
+	*RealmEvent,     // implements psm.IEvent
+	RealmPSMEvent,   // implements psm.IInnerEvent
+] {
+	return psm.EventPublishHook[
+		*RealmKeys,      // implements psm.IKeyset
+		*RealmState,     // implements psm.IState
+		RealmStatus,     // implements psm.IStatusEnum
+		*RealmStateData, // implements psm.IStateData
+		*RealmEvent,     // implements psm.IEvent
+		RealmPSMEvent,   // implements psm.IInnerEvent
+	](cb)
+}
+func RealmPSMUpsertPublishHook(cb func(context.Context, psm.Publisher, *RealmState) error) psm.UpsertPublishHook[
+	*RealmKeys,      // implements psm.IKeyset
+	*RealmState,     // implements psm.IState
+	RealmStatus,     // implements psm.IStatusEnum
+	*RealmStateData, // implements psm.IStateData
+] {
+	return psm.UpsertPublishHook[
+		*RealmKeys,      // implements psm.IKeyset
+		*RealmState,     // implements psm.IState
+		RealmStatus,     // implements psm.IStatusEnum
+		*RealmStateData, // implements psm.IStateData
+	](cb)
+}
