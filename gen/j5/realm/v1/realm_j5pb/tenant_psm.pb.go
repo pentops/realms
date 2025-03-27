@@ -60,9 +60,13 @@ func (msg *TenantKeys) PSMFullName() string {
 }
 func (msg *TenantKeys) PSMKeyValues() (map[string]string, error) {
 	keyset := map[string]string{
-		"tenant_id":   msg.TenantId,
-		"realm_id":    msg.RealmId,
-		"tenant_type": msg.TenantType,
+		"tenant_id": msg.TenantId,
+	}
+	if msg.RealmId != "" {
+		keyset["realm_id"] = msg.RealmId
+	}
+	if msg.TenantType != "" {
+		keyset["tenant_type"] = msg.TenantType
 	}
 	return keyset, nil
 }
@@ -362,5 +366,35 @@ func TenantPSMGeneralEventDataHook(cb func(context.Context, sqrlx.Transaction, *
 		*TenantStateData, // implements psm.IStateData
 		*TenantEvent,     // implements psm.IEvent
 		TenantPSMEvent,   // implements psm.IInnerEvent
+	](cb)
+}
+func TenantPSMEventPublishHook(cb func(context.Context, psm.Publisher, *TenantState, *TenantEvent) error) psm.EventPublishHook[
+	*TenantKeys,      // implements psm.IKeyset
+	*TenantState,     // implements psm.IState
+	TenantStatus,     // implements psm.IStatusEnum
+	*TenantStateData, // implements psm.IStateData
+	*TenantEvent,     // implements psm.IEvent
+	TenantPSMEvent,   // implements psm.IInnerEvent
+] {
+	return psm.EventPublishHook[
+		*TenantKeys,      // implements psm.IKeyset
+		*TenantState,     // implements psm.IState
+		TenantStatus,     // implements psm.IStatusEnum
+		*TenantStateData, // implements psm.IStateData
+		*TenantEvent,     // implements psm.IEvent
+		TenantPSMEvent,   // implements psm.IInnerEvent
+	](cb)
+}
+func TenantPSMUpsertPublishHook(cb func(context.Context, psm.Publisher, *TenantState) error) psm.UpsertPublishHook[
+	*TenantKeys,      // implements psm.IKeyset
+	*TenantState,     // implements psm.IState
+	TenantStatus,     // implements psm.IStatusEnum
+	*TenantStateData, // implements psm.IStateData
+] {
+	return psm.UpsertPublishHook[
+		*TenantKeys,      // implements psm.IKeyset
+		*TenantState,     // implements psm.IState
+		TenantStatus,     // implements psm.IStatusEnum
+		*TenantStateData, // implements psm.IStateData
 	](cb)
 }
