@@ -45,14 +45,14 @@ func GetAuthenticatedAction(ctx context.Context) (*auth_j5pb.Action, error) {
 }
 
 func GRPCMiddleware(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	incomming, err := getSidecarJWT(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	action := &auth_j5pb.Action{
 		Method: info.FullMethod,
 		// TODO: Fingerprint
+	}
+
+	incomming, err := getSidecarJWT(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	if incomming != nil {
