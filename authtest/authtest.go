@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/pentops/j5/gen/j5/auth/v1/auth_j5pb"
+	"github.com/pentops/j5/gen/j5/messaging/v1/messaging_j5pb"
 	"github.com/pentops/realms/j5auth"
 	"google.golang.org/grpc/metadata"
 )
@@ -53,8 +54,37 @@ func ActionContext(ctx context.Context, opts ...tokenOption) context.Context {
 		Method: "/fake/method",
 	}
 
-	ctx = j5auth.WithAction(ctx, action)
-	return ctx
+	return j5auth.WithAction(ctx, action)
+}
+
+type messageOption func(*messaging_j5pb.MessageCause)
+
+func WithMessageID(id string) messageOption {
+	return func(cause *messaging_j5pb.MessageCause) {
+		cause.MessageId = id
+	}
+}
+
+func WithMessageSource(app, env string) messageOption {
+	return func(cause *messaging_j5pb.MessageCause) {
+		cause.SourceApp = app
+		cause.SourceEnv = env
+	}
+}
+
+func MessageContext(ctx context.Context, mods ...messageOption) context.Context {
+	cause := &messaging_j5pb.MessageCause{
+		Method:    "/fake/method",
+		MessageId: uuid.NewString(),
+		SourceApp: "source-app",
+		SourceEnv: "source-env",
+	}
+
+	for _, mod := range mods {
+		mod(cause)
+	}
+
+	return j5auth.WithMessageCause(ctx, cause)
 }
 
 func buildToken(opts ...tokenOption) *j5auth.JWT {

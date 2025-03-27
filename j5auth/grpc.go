@@ -34,6 +34,14 @@ func WithAction(ctx context.Context, action *auth_j5pb.Action) context.Context {
 	})
 }
 
+// WithMessageCause should only be used in test cases, otherwise use the
+// GRPCMiddleware.
+func WithMessageCause(ctx context.Context, message *messaging_j5pb.MessageCause) context.Context {
+	return withControllerContext(ctx, &controllerContext{
+		Message: message,
+	})
+}
+
 var ErrNoActor = status.Error(codes.Unauthenticated, "no actor in context")
 
 func GetAction(ctx context.Context) *auth_j5pb.Action {
