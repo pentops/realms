@@ -110,7 +110,7 @@ func runMiddleware(t testing.TB, method string, md metadata.MD, callback func(co
 
 	_, err := GRPCMiddleware(ctx, nil, &grpc.UnaryServerInfo{
 		FullMethod: method,
-	}, func(ctx context.Context, req interface{}) (interface{}, error) {
+	}, func(ctx context.Context, req any) (any, error) {
 		callback(ctx)
 		return nil, nil
 	})

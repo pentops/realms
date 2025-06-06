@@ -2,13 +2,21 @@
 
 bundles:
   - name: realm
-    dir: proto/realm
+    dir: schema/realm
 
 generate:
   - name: base
     inputs:
       - local: realm
     output: .
+    mods:
+      - goPackageNames:
+          prefix: github.com/pentops/realms/gen
+          suffixes:
+            "": "_j5pb"
+            "service": "_j5spb"
+            "topic": "_j5tpb"
+
     opts:
       paths: import
       module: github.com/pentops/realms
@@ -16,10 +24,11 @@ generate:
       - base: go
       - base: go-sugar
       - base: go-grpc
+      - base: go-o5-messaging
       - base: go-psm
 
-#managedPaths:
-  #- gen
+managedPaths:
+  - gen
 
 plugins:
   - name: go
@@ -37,7 +46,12 @@ plugins:
     docker:
       image: ghcr.io/pentops/protoc-gen-go-sugar:b1e769eeea97192209ab5a4e8fc560bf72ce5ba7
 
+  - base: go
+    name: go-o5-messaging
+    docker:
+      image: ghcr.io/pentops/protoc-gen-go-o5-messaging:fba07334e9aa1affc26b34eae82254a36f955267
+
   - name: go-psm
     base: go
     docker:
-      image: ghcr.io/pentops/protoc-gen-go-protostate:a72be074893a461ac0e347b44360aa1073e4ef8d
+      image: ghcr.io/pentops/protoc-gen-go-protostate:d359da407fc3decc31b11214f18347c1ca6cbe85

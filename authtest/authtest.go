@@ -91,7 +91,7 @@ func MessageContext(ctx context.Context, mods ...messageOption) context.Context 
 
 // AutoMessageGRPCMiddleware adds a default message context for all gRPC
 // services ending in "Topic"
-func AutoMessageGRPCMiddleware(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func AutoMessageGRPCMiddleware(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	method := strings.Split(info.FullMethod, "/")
 	if len(method) != 3 {
 		return nil, fmt.Errorf("invalid method %s", method)

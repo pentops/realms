@@ -1,0 +1,40 @@
+package j5.realm.v1
+
+import j5.auth.v1:auth
+
+service ApiAuth {
+	basePath = "/realm-auth/v1"
+
+	method Whoami {
+		httpMethod = "GET"
+		httpPath = "/whoami"
+
+		request {
+		}
+
+		response {
+			field actor object:auth.Actor
+			field realms array:object {
+				field realm object:RealmState
+				field tenant object:TenantState
+			}
+		}
+	}
+
+	method GetToken {
+		httpMethod = "POST"
+		httpPath = "/token"
+		auth {
+			none
+		}
+
+		request {
+			field clientId ! key:uuid
+			field clientSecret ! string
+		}
+
+		response {
+			field jwt ! string
+		}
+	}
+}

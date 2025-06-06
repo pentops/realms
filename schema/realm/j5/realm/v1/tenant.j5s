@@ -1,0 +1,36 @@
+package j5.realm.v1
+
+entity Tenant {
+
+	key tenantId ! key:id62 {
+		primary = true
+	}
+
+	key realmId ! key:uuid
+
+	key tenantType key:custom {
+		pattern = "^[a-z0-9-]+$"
+	}
+
+	data spec ! object:TenantSpec
+
+	status ACTIVE
+
+	event Created {
+		field spec object:TenantSpec
+	}
+
+	event Updated {
+		field spec object:TenantSpec
+	}
+}
+
+object TenantSpec {
+	field name string
+
+	field metadata map:string {
+		| Key-value pairs of metadata interpreted in the context of the realm and
+		| tenant-type within the realm
+	}
+
+}
