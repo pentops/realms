@@ -1,0 +1,53 @@
+package j5.realm.v1
+
+entity Realm {
+	key realmId ! key:uuid {
+		primary = true
+	}
+
+	data spec ! object:RealmSpec
+
+	status ACTIVE
+
+	event Created {
+		field spec object:RealmSpec
+	}
+
+	event Updated {
+		field spec object:RealmSpec
+	}
+}
+
+
+object RealmSpec {
+	field name ! string 
+
+  // predefined 'well-known' realm types specified at the application level.
+  field type string {
+	  rules.pattern = "^[a-z0-9-]+$"
+  }
+
+  // API URL for API Access to the realm
+  field baseUrl string
+
+  field tenantTypes array:object:TenantType
+
+  // Key-value pairs of metadata for this realm, which are interpreted in the
+  // context of the realm type
+  field metadata map:string //map<string, string> metadata = 10;
+}
+
+object TenantType {
+  field name string {
+	  rules.pattern = "^[a-z0-9-]+$"
+  }
+
+  field label string
+
+  field singular bool {
+  | the tenant-type has exactly one tenant ID in the realm.
+  | In multi-tenant environments, this tenant type is has global access across all tenants
+  | If this is the only tenant-type in the realm, the realm itself is single-tenant.
+  }
+}
+
