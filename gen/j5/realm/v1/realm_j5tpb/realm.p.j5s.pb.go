@@ -7,9 +7,6 @@
 package realm_j5tpb
 
 import (
-	reflect "reflect"
-	sync "sync"
-
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	_ "github.com/pentops/j5/gen/j5/ext/v1/ext_j5pb"
 	_ "github.com/pentops/j5/gen/j5/messaging/v1/messaging_j5pb"
@@ -18,6 +15,8 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	reflect "reflect"
+	sync "sync"
 )
 
 const (
