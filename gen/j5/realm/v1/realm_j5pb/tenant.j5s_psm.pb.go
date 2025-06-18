@@ -76,10 +76,12 @@ func (msg *TenantKeys) PSMIsSet() bool {
 func (msg *TenantKeys) PSMFullName() string {
 	return "j5.realm.v1.tenant"
 }
-func (msg *TenantKeys) PSMKeyValues() (map[string]string, error) {
-	keyset := map[string]string{
+func (msg *TenantKeys) PSMKeyValues() (map[string]any, error) {
+	keyset := map[string]any{
 		"tenant_id": msg.TenantId,
-		"realm_id":  msg.RealmId,
+	}
+	if msg.RealmId != "" {
+		keyset["realm_id"] = msg.RealmId
 	}
 	if msg.TenantType != "" {
 		keyset["tenant_type"] = msg.TenantType
@@ -304,7 +306,7 @@ func TenantPSMDataHook[
 	cb func(
 		context.Context,
 		sqrlx.Transaction,
-		*TenantData,
+		*TenantState,
 		SE,
 	) error) psm.TransitionHook[
 	*TenantKeys,    // implements psm.IKeyset
@@ -329,7 +331,7 @@ func TenantPSMDataHook[
 				name := event.ProtoReflect().Descriptor().FullName()
 				return fmt.Errorf("unexpected event type in transition: %s [IE] does not match [SE] (%T)", name, new(SE))
 			}
-			return cb(ctx, tx, state.PSMData(), asType)
+			return cb(ctx, tx, state, asType)
 		},
 		EventType:   eventType,
 		RunOnFollow: true,
