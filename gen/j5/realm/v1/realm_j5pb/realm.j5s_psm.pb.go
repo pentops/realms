@@ -76,8 +76,8 @@ func (msg *RealmKeys) PSMIsSet() bool {
 func (msg *RealmKeys) PSMFullName() string {
 	return "j5.realm.v1.realm"
 }
-func (msg *RealmKeys) PSMKeyValues() (map[string]string, error) {
-	keyset := map[string]string{
+func (msg *RealmKeys) PSMKeyValues() (map[string]any, error) {
+	keyset := map[string]any{
 		"realm_id": msg.RealmId,
 	}
 	return keyset, nil
@@ -300,7 +300,7 @@ func RealmPSMDataHook[
 	cb func(
 		context.Context,
 		sqrlx.Transaction,
-		*RealmData,
+		*RealmState,
 		SE,
 	) error) psm.TransitionHook[
 	*RealmKeys,    // implements psm.IKeyset
@@ -325,7 +325,7 @@ func RealmPSMDataHook[
 				name := event.ProtoReflect().Descriptor().FullName()
 				return fmt.Errorf("unexpected event type in transition: %s [IE] does not match [SE] (%T)", name, new(SE))
 			}
-			return cb(ctx, tx, state.PSMData(), asType)
+			return cb(ctx, tx, state, asType)
 		},
 		EventType:   eventType,
 		RunOnFollow: true,

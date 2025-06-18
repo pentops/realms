@@ -54,4 +54,4 @@ plugins:
   - name: go-psm
     base: go
     docker:
-      image: ghcr.io/pentops/protoc-gen-go-protostate:d359da407fc3decc31b11214f18347c1ca6cbe85
+      image: ghcr.io/pentops/protoc-gen-go-protostate:eece54c9845787974c8d0a39bc37030b65f2d536

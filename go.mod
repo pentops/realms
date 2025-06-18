@@ -8,9 +8,9 @@ require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250603165357-b52ab10f4468.1
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.0
-	github.com/pentops/j5 v0.0.0-20250605002250-2add77d73a52
+	github.com/pentops/j5 v0.0.0-20250617223808-91fae5a3b112
 	github.com/pentops/o5-messaging v0.0.0-20250520213617-fba07334e9aa
-	github.com/pentops/protostate v0.0.0-20250605180237-d359da407fc3
+	github.com/pentops/protostate v0.0.0-20250617222920-eece54c98457
 	github.com/pentops/sqrlx.go v0.0.0-20250520210217-2f46de329c7a
 	google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822
 	google.golang.org/grpc v1.72.2
