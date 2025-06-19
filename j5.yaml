@@ -9,13 +9,6 @@ generate:
     inputs:
       - local: realm
     output: .
-    mods:
-      - goPackageNames:
-          prefix: github.com/pentops/realms/gen
-          suffixes:
-            "": "_j5pb"
-            "service": "_j5spb"
-            "topic": "_j5tpb"
 
     opts:
       paths: import

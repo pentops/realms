@@ -7,7 +7,14 @@ options:
   subPackages:
   - name: service
 
-
 registry:
   owner: pentops
   name: realm
+
+mods:
+  - goPackageNames:
+      prefix: github.com/pentops/realms/gen
+      suffixes:
+        "": "_j5pb"
+        "service": "_j5spb"
+        "topic": "_j5tpb"
