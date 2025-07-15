@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/pentops/j5/gen/j5/auth/v1/auth_j5pb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -62,9 +61,6 @@ func ActorFromJWT(jwt *JWT) (*auth_j5pb.Actor, error) {
 		return nil, fmt.Errorf("invalid subject: %s", jwt.Subject)
 	}
 	subjectType, subjectID := subjectParts[0], subjectParts[1]
-	if _, err := uuid.Parse(subjectID); err != nil {
-		return nil, fmt.Errorf("invalid subject ID: %s", subjectID)
-	}
 
 	issuedAt := time.Unix(jwt.IssuedAt, 0)
 
