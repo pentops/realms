@@ -4,7 +4,7 @@ package realm_j5tpb
 
 import (
 	context "context"
-	psm "github.com/pentops/protostate/psm"
+	psm "github.com/pentops/j5/lib/psm"
 	realm_j5pb "github.com/pentops/realms/gen/j5/realm/v1/realm_j5pb"
 )
 
