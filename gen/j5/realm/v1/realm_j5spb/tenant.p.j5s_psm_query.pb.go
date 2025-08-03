@@ -4,67 +4,55 @@ package realm_j5spb
 
 import (
 	context "context"
-	psm "github.com/pentops/protostate/psm"
+	fmt "fmt"
+	j5reflect "github.com/pentops/j5/lib/j5reflect"
+	j5schema "github.com/pentops/j5/lib/j5schema"
+	psm "github.com/pentops/j5/lib/psm"
 	sqrlx "github.com/pentops/sqrlx.go/sqrlx"
 )
 
 // State Query Service for %sTenant
 // QuerySet is the query set for the Tenant service.
 
-type TenantPSMQuerySet = psm.StateQuerySet[
-	*TenantGetRequest,
-	*TenantGetResponse,
-	*TenantListRequest,
-	*TenantListResponse,
-	*TenantEventsRequest,
-	*TenantEventsResponse,
-]
+type TenantPSMQuerySet = psm.StateQuerySet
 
 func NewTenantPSMQuerySet(
-	smSpec psm.QuerySpec[
-		*TenantGetRequest,
-		*TenantGetResponse,
-		*TenantListRequest,
-		*TenantListResponse,
-		*TenantEventsRequest,
-		*TenantEventsResponse,
-	],
+	smSpec psm.QuerySpec,
 	options psm.StateQueryOptions,
 ) (*TenantPSMQuerySet, error) {
-	return psm.BuildStateQuerySet[
-		*TenantGetRequest,
-		*TenantGetResponse,
-		*TenantListRequest,
-		*TenantListResponse,
-		*TenantEventsRequest,
-		*TenantEventsResponse,
-	](smSpec, options)
+	return psm.BuildStateQuerySet(smSpec, options)
 }
 
-type TenantPSMQuerySpec = psm.QuerySpec[
-	*TenantGetRequest,
-	*TenantGetResponse,
-	*TenantListRequest,
-	*TenantListResponse,
-	*TenantEventsRequest,
-	*TenantEventsResponse,
-]
+type TenantPSMQuerySpec = psm.QuerySpec
 
 func DefaultTenantPSMQuerySpec(tableSpec psm.QueryTableSpec) TenantPSMQuerySpec {
-	return psm.QuerySpec[
-		*TenantGetRequest,
-		*TenantGetResponse,
-		*TenantListRequest,
-		*TenantListResponse,
-		*TenantEventsRequest,
-		*TenantEventsResponse,
-	]{
+	return psm.QuerySpec{
+		GetMethod: &j5schema.MethodSchema{
+			Request:  j5schema.MustObjectSchema((&TenantGetRequest{}).ProtoReflect().Descriptor()),
+			Response: j5schema.MustObjectSchema((&TenantGetResponse{}).ProtoReflect().Descriptor()),
+		},
+		ListMethod: &j5schema.MethodSchema{
+			Request:  j5schema.MustObjectSchema((&TenantListRequest{}).ProtoReflect().Descriptor()),
+			Response: j5schema.MustObjectSchema((&TenantListResponse{}).ProtoReflect().Descriptor()),
+		},
+		ListEventsMethod: &j5schema.MethodSchema{
+			Request:  j5schema.MustObjectSchema((&TenantEventsRequest{}).ProtoReflect().Descriptor()),
+			Response: j5schema.MustObjectSchema((&TenantEventsResponse{}).ProtoReflect().Descriptor()),
+		},
 		QueryTableSpec: tableSpec,
-		ListRequestFilter: func(req *TenantListRequest) (map[string]interface{}, error) {
+		ListRequestFilter: func(reqReflect j5reflect.Object) (map[string]interface{}, error) {
+			req, ok := reqReflect.Interface().(*TenantListRequest)
+			if !ok {
+				return nil, fmt.Errorf("expected *TenantListRequest but got %T", req)
+			}
 			filter := map[string]interface{}{}
 			return filter, nil
 		},
-		ListEventsRequestFilter: func(req *TenantEventsRequest) (map[string]interface{}, error) {
+		ListEventsRequestFilter: func(reqReflect j5reflect.Object) (map[string]interface{}, error) {
+			req, ok := reqReflect.Interface().(*TenantEventsRequest)
+			if !ok {
+				return nil, fmt.Errorf("expected *TenantEventsRequest but got %T", req)
+			}
 			filter := map[string]interface{}{}
 			filter["tenant_id"] = req.TenantId
 			return filter, nil
@@ -89,7 +77,7 @@ func NewTenantQueryServiceImpl(db sqrlx.Transactor, querySet *TenantPSMQuerySet)
 
 func (s *TenantQueryServiceImpl) TenantGet(ctx context.Context, req *TenantGetRequest) (*TenantGetResponse, error) {
 	resObject := &TenantGetResponse{}
-	err := s.querySet.Get(ctx, s.db, req, resObject)
+	err := s.querySet.Get(ctx, s.db, req.J5Object(), resObject.J5Object())
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +86,7 @@ func (s *TenantQueryServiceImpl) TenantGet(ctx context.Context, req *TenantGetRe
 
 func (s *TenantQueryServiceImpl) TenantList(ctx context.Context, req *TenantListRequest) (*TenantListResponse, error) {
 	resObject := &TenantListResponse{}
-	err := s.querySet.List(ctx, s.db, req, resObject)
+	err := s.querySet.List(ctx, s.db, req.J5Object(), resObject.J5Object())
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +95,7 @@ func (s *TenantQueryServiceImpl) TenantList(ctx context.Context, req *TenantList
 
 func (s *TenantQueryServiceImpl) TenantEvents(ctx context.Context, req *TenantEventsRequest) (*TenantEventsResponse, error) {
 	resObject := &TenantEventsResponse{}
-	err := s.querySet.ListEvents(ctx, s.db, req, resObject)
+	err := s.querySet.ListEvents(ctx, s.db, req.J5Object(), resObject.J5Object())
 	if err != nil {
 		return nil, err
 	}

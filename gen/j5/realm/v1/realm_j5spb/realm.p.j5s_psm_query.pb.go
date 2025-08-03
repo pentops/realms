@@ -4,67 +4,55 @@ package realm_j5spb
 
 import (
 	context "context"
-	psm "github.com/pentops/protostate/psm"
+	fmt "fmt"
+	j5reflect "github.com/pentops/j5/lib/j5reflect"
+	j5schema "github.com/pentops/j5/lib/j5schema"
+	psm "github.com/pentops/j5/lib/psm"
 	sqrlx "github.com/pentops/sqrlx.go/sqrlx"
 )
 
 // State Query Service for %sRealm
 // QuerySet is the query set for the Realm service.
 
-type RealmPSMQuerySet = psm.StateQuerySet[
-	*RealmGetRequest,
-	*RealmGetResponse,
-	*RealmListRequest,
-	*RealmListResponse,
-	*RealmEventsRequest,
-	*RealmEventsResponse,
-]
+type RealmPSMQuerySet = psm.StateQuerySet
 
 func NewRealmPSMQuerySet(
-	smSpec psm.QuerySpec[
-		*RealmGetRequest,
-		*RealmGetResponse,
-		*RealmListRequest,
-		*RealmListResponse,
-		*RealmEventsRequest,
-		*RealmEventsResponse,
-	],
+	smSpec psm.QuerySpec,
 	options psm.StateQueryOptions,
 ) (*RealmPSMQuerySet, error) {
-	return psm.BuildStateQuerySet[
-		*RealmGetRequest,
-		*RealmGetResponse,
-		*RealmListRequest,
-		*RealmListResponse,
-		*RealmEventsRequest,
-		*RealmEventsResponse,
-	](smSpec, options)
+	return psm.BuildStateQuerySet(smSpec, options)
 }
 
-type RealmPSMQuerySpec = psm.QuerySpec[
-	*RealmGetRequest,
-	*RealmGetResponse,
-	*RealmListRequest,
-	*RealmListResponse,
-	*RealmEventsRequest,
-	*RealmEventsResponse,
-]
+type RealmPSMQuerySpec = psm.QuerySpec
 
 func DefaultRealmPSMQuerySpec(tableSpec psm.QueryTableSpec) RealmPSMQuerySpec {
-	return psm.QuerySpec[
-		*RealmGetRequest,
-		*RealmGetResponse,
-		*RealmListRequest,
-		*RealmListResponse,
-		*RealmEventsRequest,
-		*RealmEventsResponse,
-	]{
+	return psm.QuerySpec{
+		GetMethod: &j5schema.MethodSchema{
+			Request:  j5schema.MustObjectSchema((&RealmGetRequest{}).ProtoReflect().Descriptor()),
+			Response: j5schema.MustObjectSchema((&RealmGetResponse{}).ProtoReflect().Descriptor()),
+		},
+		ListMethod: &j5schema.MethodSchema{
+			Request:  j5schema.MustObjectSchema((&RealmListRequest{}).ProtoReflect().Descriptor()),
+			Response: j5schema.MustObjectSchema((&RealmListResponse{}).ProtoReflect().Descriptor()),
+		},
+		ListEventsMethod: &j5schema.MethodSchema{
+			Request:  j5schema.MustObjectSchema((&RealmEventsRequest{}).ProtoReflect().Descriptor()),
+			Response: j5schema.MustObjectSchema((&RealmEventsResponse{}).ProtoReflect().Descriptor()),
+		},
 		QueryTableSpec: tableSpec,
-		ListRequestFilter: func(req *RealmListRequest) (map[string]interface{}, error) {
+		ListRequestFilter: func(reqReflect j5reflect.Object) (map[string]interface{}, error) {
+			req, ok := reqReflect.Interface().(*RealmListRequest)
+			if !ok {
+				return nil, fmt.Errorf("expected *RealmListRequest but got %T", req)
+			}
 			filter := map[string]interface{}{}
 			return filter, nil
 		},
-		ListEventsRequestFilter: func(req *RealmEventsRequest) (map[string]interface{}, error) {
+		ListEventsRequestFilter: func(reqReflect j5reflect.Object) (map[string]interface{}, error) {
+			req, ok := reqReflect.Interface().(*RealmEventsRequest)
+			if !ok {
+				return nil, fmt.Errorf("expected *RealmEventsRequest but got %T", req)
+			}
 			filter := map[string]interface{}{}
 			filter["realm_id"] = req.RealmId
 			return filter, nil
@@ -89,7 +77,7 @@ func NewRealmQueryServiceImpl(db sqrlx.Transactor, querySet *RealmPSMQuerySet) *
 
 func (s *RealmQueryServiceImpl) RealmGet(ctx context.Context, req *RealmGetRequest) (*RealmGetResponse, error) {
 	resObject := &RealmGetResponse{}
-	err := s.querySet.Get(ctx, s.db, req, resObject)
+	err := s.querySet.Get(ctx, s.db, req.J5Object(), resObject.J5Object())
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +86,7 @@ func (s *RealmQueryServiceImpl) RealmGet(ctx context.Context, req *RealmGetReque
 
 func (s *RealmQueryServiceImpl) RealmList(ctx context.Context, req *RealmListRequest) (*RealmListResponse, error) {
 	resObject := &RealmListResponse{}
-	err := s.querySet.List(ctx, s.db, req, resObject)
+	err := s.querySet.List(ctx, s.db, req.J5Object(), resObject.J5Object())
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +95,7 @@ func (s *RealmQueryServiceImpl) RealmList(ctx context.Context, req *RealmListReq
 
 func (s *RealmQueryServiceImpl) RealmEvents(ctx context.Context, req *RealmEventsRequest) (*RealmEventsResponse, error) {
 	resObject := &RealmEventsResponse{}
-	err := s.querySet.ListEvents(ctx, s.db, req, resObject)
+	err := s.querySet.ListEvents(ctx, s.db, req.J5Object(), resObject.J5Object())
 	if err != nil {
 		return nil, err
 	}
